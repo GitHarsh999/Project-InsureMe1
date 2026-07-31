@@ -1,0 +1,45 @@
+pipeline {
+    agent any 
+    tools{
+        maven 'maven'
+    }
+environment {
+    SCANNER_HOME =  tool 'sonar-scanner'
+}
+    stages {
+        stage('code-pull'){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/GitHarsh999/Project-InsureMe1.git']])
+            }
+        }
+        stage('code-build'){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        
+        stage("code-test") {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=InsureMe \
+                        -Dsonar.projectName=InsureMe \
+                        -Dsonar.sources=src \
+                        -Dsonar.java.binaries=target/classes
+                    '''
+                }
+            }
+        }
+
+        stage("code-test-quality gate") {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-1'
+                }
+            }
+        }
+   
+
+    }
+}
