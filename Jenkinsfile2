@@ -1,3 +1,4 @@
+@repo _ 
 pipeline {
     agent any 
     tools{
@@ -9,7 +10,9 @@ environment {
     stages {
         stage('code-pull'){
             steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/GitHarsh999/Project-InsureMe1.git']])
+                 repo('https://github.com/GitHarsh999/Project-InsureMe1.git')
+                             
+            
             }
         }
         stage('code-build'){
