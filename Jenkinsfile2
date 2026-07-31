@@ -1,4 +1,4 @@
-@repo _ 
+@Library(repo-lib) _ 
 pipeline {
     agent any 
     tools{
